@@ -4,7 +4,7 @@ from jinja2 import Environment, FileSystemLoader
 import markdown
 from urllib.parse import urlparse, parse_qs
 
-EDIT_MODE = True
+EDIT_MODE = False
 
 class NLPApp:
     def __init__(self, template_dir='/var/www/server/app/templates', db_path='/var/www/server/app/lehr_pfad.db'):
@@ -167,7 +167,7 @@ class NLPApp:
                 query_string = environ.get('QUERY_STRING', '')  # Get raw query string
                 query_params = parse_qs(query_string)  # Parse into a dictionary
 
-                #EDIT_MODE = query_params.get('edit', ['false'])[0].lower() == 'true'
+                EDIT_MODE = query_params.get('edit', ['false'])[0].lower() == 'true'
                 logging.error(f"Edit mode: {EDIT_MODE}")
 
 
