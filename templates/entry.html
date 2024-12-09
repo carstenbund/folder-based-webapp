@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ main_entry[2] | e }}</title> <!-- Use title from database -->
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9; }
+        header { background: #333; color: #fff; padding: 20px 15px; }
+        header h1 { margin: 0; font-size: 24px; }
+        main { padding: 15px; max-width: 800px; margin: auto; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        section { margin-bottom: 20px; }
+        section img { max-width: 60%; height: auto; display: block; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        section audio { width: 60%; margin: 10px 0; }
+        footer { margin-top: 20px; text-align: center; font-size: 14px; color: #666; }
+        .edit-button {
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 5px;:
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        {{ main_entry[2] | e }} <!-- Title as Header -->
+    </header>
+    <main>
+        <!-- Display First Image -->
+        {% if parsed_entries.images %}
+        <section>
+            <img src="/s/{{ main_entry[0] }}{{ parsed_entries.images[0].filename }}" alt="{{ parsed_entries.images[0].filename | e }}">
+        </section>
+        {% endif %}
+
+        <!-- Audio Section -->
+        {% if parsed_entries.audio %}
+        <section>
+            <h2>Audio</h2>
+            {% for audio in parsed_entries.audio %}
+            <audio controls>
+                <source src="/s/{{ main_entry[1] }}/{{ audio.filename }}" type="{{ audio.file_type }}">
+                Your browser does not support the audio element.
+            </audio>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        {% if parsed_entries.folders %}
+        <section>
+            <h2>Einträge</h2>
+            {% for folder in parsed_entries.folders %}
+            <a href="/entry/{{ folder.id }}">{{ folder.content or folder.filename | e }}</a>
+            {% if EDIT %}
+            <a class="edit-button" href="/edit/{{ folder.id }}">Edit</a>
+            {% endif %}
+            {% endfor %}
+        </section>
+        {% endif %}
+        
+        <!-- Short Description -->
+        {% if parsed_entries.text %}
+        <section>
+            <h2>{{ parsed_entries.text[0].content | safe }}</h2>
+            <a class="edit-button" href="/edit/{{ parsed_entries.text[0].id }}">Edit</a>
+        </section>
+        {% endif %}
+        
+        <!-- Other Details -->
+        <section>
+            <h2>Weiter Daten</h2>
+            {% for text in parsed_entries.text[1:] %}
+            <h3>{{ text.filename | e }}</h3>
+            <span>{{ text.content | safe }}</span>
+            <a class="edit-button" href="/edit/{{ text.id }}">Edit</a>
+            {% endfor %}
+        </section>
+    </main>
+    <footer>
+        <p><a href="/">Back to Main Entries</a></p>
+    </footer>
+</body>
+</html>

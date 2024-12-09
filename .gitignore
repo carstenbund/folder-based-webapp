@@ -1,0 +1,71 @@
+# Python specific
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.par
+*.whl
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Images
+*.jpg
+*.png
+*.webp
+
+# media
+*.mp3
+*.m4a
+*.pdf
+*.mov
+*.mp4
+
+#backups and archives
+*.zip
+*.tgz
+*.tar
+
+#db files
+*.sqlite
+*.db
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+._*
+.fseventsd
+.apdisk
+
+# General hidden files
+*.swp
+*.swo
+*.log
+*.tmp
+*.bak
+*.~*
+
+# macOS Network temp files
+.Network Trash Folder/
+Temporary Items/
+

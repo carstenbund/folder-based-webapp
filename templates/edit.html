@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit {{ entry["filename"] | e }}</title> <!-- Title with filename -->
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9; }
+        header { background: #333; color: #fff; padding: 20px 15px; }
+        header h1 { margin: 0; font-size: 24px; }
+        main { padding: 15px; max-width: 800px; margin: auto; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        form { margin-top: 20px; }
+        textarea { width: 100%; height: 300px; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { padding: 5px 10px; font-size: 14px; color: #fff; background-color: #007BFF; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .back-link { margin-top: 10px; display: inline-block; color: #007BFF; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Edit Entry: {{ entry["filename"] | e }}</h1> <!-- Display filename in header -->
+    </header>
+    <main>
+        <p><strong>Filename:</strong> {{ entry["filename"] | e }}</p> <!-- Display filename in content -->
+        <form action="/save" method="post">
+            <input type="hidden" name="id" value="{{ entry['id'] }}">
+            <input type="hidden" name="parent_id" value="{{ entry['parent_id'] }}">
+            <label for="content">Content:</label>
+            <textarea name="content" id="content">{{ entry["content"] }}</textarea> <!-- Pre-filled content -->
+            <button type="submit">Save Changes</button>
+        </form>
+        <a href="/entry/{{ entry['parent_id'] }}" class="back-link">Cancel and Go Back</a> <!-- Link to go back -->
+    </main>
+</body>
+</html>
