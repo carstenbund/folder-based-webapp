@@ -7,7 +7,7 @@ from urllib.parse import urlparse, parse_qs
 EDIT_MODE = True
 
 class NLPApp:
-    def __init__(self, template_dir='/var/www/natur-lehrpfad.de/app/templates', db_path='/var/www/natur-lehrpfad.de/app/lehr_pfad.db'):
+    def __init__(self, template_dir='/var/www/server/app/templates', db_path='/var/www/server/app/lehr_pfad.db'):
         self.env = Environment(loader=FileSystemLoader(template_dir))
         self.db_path = db_path
 
