@@ -10,14 +10,12 @@
         header h1 { margin: 0; font-size: 24px; }
         main { padding: 15px; max-width: 800px; margin: auto; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
         section { margin-bottom: 20px; }
-        section img { max-width: 60%; height: auto; display: block; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
-        section audio { width: 60%; margin: 10px 0; }
-        footer { margin-top: 20px; text-align: center; font-size: 14px; color: #666; }
-        .edit-button {
+
+	.edit-button {
             font-size: 14px;
             display: inline-block;
             margin-top: 10px;
-            padding: 5px 5px;:
+            padding: 5px 5px;
             background-color: #007BFF;
             color: #fff;
             text-decoration: none;
@@ -26,21 +24,66 @@
         .edit-button:hover {
             background-color: #0056b3;
         }
+
+
+	.entries {
+		width: 40%;
+	  background-color: #e9ecef; /* Light gray background */
+	  color: #007bff; /* Bootstrap's default link blue */
+	  padding: 0px 12px; /* Spacing similar to Bootstrap buttons */
+	  text-align: left;
+	  text-decoration: none; /* No underline for a clean look */
+	  display: block; /* Inline-block for flexibility */
+	  border: 2px solid transparent; /* Border for structure */
+	  border-radius: 0.25rem; /* Rounded corners */
+	  font-family: "Helvetica Neue", Arial, sans-serif; /* Bootstrap-style font */
+	  font-size: 1rem; /* Bootstrap's base font size */
+	  transition: all 0.2s ease-in-out; /* Smooth hover effect */
+	}
+
+	.entries:hover, 
+	.entries:active {
+	  background-color: #488348; /* Bootstrap blue hover background */
+	  color: #fff; /* White text on hover */
+	  border-color: #488348; /* Darker blue border for contrast */
+	  text-decoration: none; /* Ensure underline doesn't appear */
+	  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Add a hover shadow */
+	}
+
+
+
+        section img { max-width: 60%; height: auto; display: block; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        section audio { width: 60%; margin: 10px 0; }
+        footer { margin-top: 20px; text-align: center; font-size: 14px; color: #666; }
+
     </style>
+
 </head>
 <body>
     <header>
-        {{ main_entry[2] | e }} <!-- Title as Header -->
+        <h1>{{ main_entry[2] | e }}</h1> <!-- Title as Header -->
     </header>
     <main>
-        <!-- Display First Image -->
+        <!-- Short Description -->
+        {% if parsed_entries.text %}
+        <section>
+            <h2>{{ main_entry[2] | safe }}</h2>
+            {% if EDIT_MODE %}
+	    <a class="edit-button" href="/app/edit/{{ main_entry[0] }}">Edit</a>
+            {% endif %}
+        </section>
+        {% endif %}
+        
+	<!-- Display First Image -->
         {% if parsed_entries.images %}
         <section>
-            <img src="/s/{{ main_entry[0] }}{{ parsed_entries.images[0].filename }}" alt="{{ parsed_entries.images[0].filename | e }}">
+	    {% for image in parsed_entries.images %}
+		<img src="/s/{{ main_entry[1] }}/{{ image.filename }}" alt="{{ image.filename | e }}">
+            {% endfor %}
         </section>
         {% endif %}
 
-        <!-- Audio Section -->
+	<!-- Audio Section -->
         {% if parsed_entries.audio %}
         <section>
             <h2>Audio</h2>
@@ -53,38 +96,45 @@
         </section>
         {% endif %}
 
+
+	<!-- Short Description -->
+        {% if parsed_entries.text %}
+        <section>
+            <span>{{ parsed_entries.text[0].content | safe }}</span>
+            {% if EDIT_MODE %}
+	    <a class="edit-button" href="/app/edit/{{ parsed_entries.text[0].id }}">Edit</a>
+            {% endif %}
+        </section>
+        {% endif %}
+
+
         {% if parsed_entries.folders %}
         <section>
             <h2>Einträge</h2>
             {% for folder in parsed_entries.folders %}
-            <a href="/entry/{{ folder.id }}">{{ folder.content or folder.filename | e }}</a>
-            {% if EDIT %}
-            <a class="edit-button" href="/edit/{{ folder.id }}">Edit</a>
-            {% endif %}
+            <a class="entries" href="/app/entry/{{ folder.id }}?edit=true">{{ folder.content or folder.filename | e }}</a>
             {% endfor %}
-        </section>
-        {% endif %}
-        
-        <!-- Short Description -->
-        {% if parsed_entries.text %}
-        <section>
-            <h2>{{ parsed_entries.text[0].content | safe }}</h2>
-            <a class="edit-button" href="/edit/{{ parsed_entries.text[0].id }}">Edit</a>
         </section>
         {% endif %}
         
         <!-- Other Details -->
+	<section>
+            <img width="80px" src="/s/{{ main_entry[1] }}/qr.png" alt="QR code">
+	</section>
         <section>
-            <h2>Weiter Daten</h2>
+            <h2>Weitere Daten</h2>
             {% for text in parsed_entries.text[1:] %}
             <h3>{{ text.filename | e }}</h3>
             <span>{{ text.content | safe }}</span>
-            <a class="edit-button" href="/edit/{{ text.id }}">Edit</a>
+            {% if EDIT_MODE %}
+	    <a class="edit-button" href="/app/edit/{{ text.id }}">Edit</a>
+            {% endif %}
             {% endfor %}
         </section>
     </main>
     <footer>
-        <p><a href="/">Back to Main Entries</a></p>
+        <p><a href="/app/entry/1?edit=true">Zurück zur Übersicht</a></p>
     </footer>
 </body>
 </html>
+
