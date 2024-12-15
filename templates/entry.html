@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ main_entry[2] | e }}</title> <!-- Use title from database -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" type="text/css" href="/s/assets/css/audio-player.css">
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9; }
         header { background: #333; color: #fff; padding: 20px 15px; }
@@ -11,7 +15,7 @@
         main { padding: 15px; max-width: 800px; margin: auto; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
         section { margin-bottom: 20px; }
 
-	.edit-button {
+        .edit-button {
             font-size: 14px;
             display: inline-block;
             margin-top: 10px;
@@ -25,30 +29,29 @@
             background-color: #0056b3;
         }
 
+        .entries {
+          width: 60%;
+          background-color: #e9ecef; /* Light gray background */
+          color: #007bff; /* Bootstrap's default link blue */
+          padding: 0px 12px; /* Spacing similar to Bootstrap buttons */
+          text-align: left;
+          text-decoration: none; /* No underline for a clean look */
+          display: block; /* Inline-block for flexibility */
+          border: 2px solid transparent; /* Border for structure */
+          border-radius: 0.25rem; /* Rounded corners */
+          font-family: "Helvetica Neue", Arial, sans-serif; /* Bootstrap-style font */
+          font-size: 1rem; /* Bootstrap's base font size */
+          transition: all 0.2s ease-in-out; /* Smooth hover effect */
+        }
 
-	.entries {
-		width: 40%;
-	  background-color: #e9ecef; /* Light gray background */
-	  color: #007bff; /* Bootstrap's default link blue */
-	  padding: 0px 12px; /* Spacing similar to Bootstrap buttons */
-	  text-align: left;
-	  text-decoration: none; /* No underline for a clean look */
-	  display: block; /* Inline-block for flexibility */
-	  border: 2px solid transparent; /* Border for structure */
-	  border-radius: 0.25rem; /* Rounded corners */
-	  font-family: "Helvetica Neue", Arial, sans-serif; /* Bootstrap-style font */
-	  font-size: 1rem; /* Bootstrap's base font size */
-	  transition: all 0.2s ease-in-out; /* Smooth hover effect */
-	}
-
-	.entries:hover, 
-	.entries:active {
-	  background-color: #488348; /* Bootstrap blue hover background */
-	  color: #fff; /* White text on hover */
-	  border-color: #488348; /* Darker blue border for contrast */
-	  text-decoration: none; /* Ensure underline doesn't appear */
-	  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Add a hover shadow */
-	}
+        .entries:hover,
+        .entries:active {
+          background-color: #488348; /* Bootstrap blue hover background */
+          color: #fff; /* White text on hover */
+          border-color: #488348; /* Darker blue border for contrast */
+          text-decoration: none; /* Ensure underline doesn't appear */
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Add a hover shadow */
+        }
 
 
 
@@ -56,85 +59,216 @@
         section audio { width: 60%; margin: 10px 0; }
         footer { margin-top: 20px; text-align: center; font-size: 14px; color: #666; }
 
-    </style>
+      nav a {
+        color: #007BFF; /* Link color */
+        text-decoration: none; /* Remove underline */
+        padding: 2px 5px; /* Add some padding */
+        border-radius: 5px; /* Rounded corners */
+        transition: background-color 0.2s ease-in-out; /* Smooth hover */
+      }
+      nav a:hover {
+        background-color: #0056b3; /* Highlighted background on hover */
+        color: #fff; /* Change text color on hover */
+      }
 
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background: #555;
+            color: #fff;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 10px;
+        }
+        .hamburger-menu ul {
+            padding-left: 10px;
+            list-style: none;
+        }
+        .hamburger-menu a {
+            font-size: 14px;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+        }
+        .hamburger-menu a:hover {
+            text-decoration: underline;
+        }
+        .menu-icon {
+            cursor: pointer;
+            font-size: 24px;
+            color: #007BFF;
+        }
+      .menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #444;
+      }
+      
+      .menu-close-icon {
+        cursor: pointer;
+        font-size: 20px;
+        color: #fff;
+        background: #007BFF;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background-color 0.2s ease;
+      }
+      
+      .menu-close-icon:hover {
+        background-color: #0056b3;
+      }
+      
+    </style>   
 </head>
 <body>
     <header>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+      <nav>
+        {% if previous_entry %}
+        <a href="/app/entry/{{ previous_entry[0] }}" class="button">Previous: {{ previous_entry[1] }}</a>
+        {% endif %}
+        {% if next_entry %}
+        <a href="/app/entry/{{ next_entry[0] }}" class="button">Next: {{ next_entry[1] }}</a>
+        {% endif %}
+      </nav>
         <h1>{{ main_entry[2] | e }}</h1> <!-- Title as Header -->
+        <!-- Breadcrumb Navigation -->
+        <nav style="margin-bottom: 15px;">
+            {% for crumb in breadcrumbs %}
+                <a href="/app/entry/{{ crumb.id }}">{{ crumb.filename }}</a>
+                {% if not loop.last %} &gt; {% endif %}
+            {% endfor %}
+        </nav>
     </header>
+
+    <!-- Hamburger Menu -->
+  <div class="hamburger-menu" id="hamburger-menu">
+    <div class="menu-header">
+      <h3>Site Map</h3>
+      <span class="menu-close-icon" onclick="toggleMenu()">✖</span>
+    </div>
+    <ul>
+      {% macro render_tree(entries) %}
+      {% for entry in entries %}
+      <li>
+        <a href="/app/entry/{{ entry.id }}">{{ entry.display_name }}</a>
+        {% if entry.children %}
+        <ul>
+          {{ render_tree(entry.children) }}
+        </ul>
+        {% endif %}
+      </li>
+      {% endfor %}
+      {% endmacro %}
+      {{ render_tree(site_map) }}
+    </ul>
+  </div>
+  
+  
     <main>
-        <!-- Short Description -->
-        {% if parsed_entries.text %}
-        <section>
-            <h2>{{ main_entry[2] | safe }}</h2>
-            {% if EDIT_MODE %}
-	    <a class="edit-button" href="/app/edit/{{ main_entry[0] }}">Edit</a>
-            {% endif %}
-        </section>
+      {% if parsed_entries.text %}
+      <section>
+        <h2>{{ main_entry[2] | safe }}</h2>
+        {% if EDIT_MODE %}
+        <a class="edit-button" href="/app/edit/{{ main_entry[0] }}">Edit</a>
         {% endif %}
-        
-	<!-- Display First Image -->
-        {% if parsed_entries.images %}
-        <section>
-	    {% for image in parsed_entries.images %}
-		<img src="/s/{{ main_entry[1] }}/{{ image.filename }}" alt="{{ image.filename | e }}">
-            {% endfor %}
-        </section>
+      </section>
+      {% endif %}
+      
+      <!-- Display First Image -->
+      {% if parsed_entries.images %}
+      <section>
+        {% for image in parsed_entries.images %}
+        <img src="/s/{{ base_path }}/{{ image.filename }}" alt="{{ image.filename | e }}">
+        {% endfor %}
+      </section>
+      {% endif %}
+      
+      <!-- Audio Section -->
+      {% if parsed_entries.audio %}
+      <section>
+        <h2>Audio</h2>
+        {% for audio in parsed_entries.audio %}
+        <div class="audio-player">
+          <audio id="customAudio{{ loop.index }}" src="/s/{{ main_entry[1] }}/{{ audio.filename }}"></audio>
+          <div class="controls">
+            <button class="play-pause-btn" id="playPause{{ loop.index }}">
+              <i class="fas fa-play"></i>
+            </button>
+            <div class="time-and-progress">
+              <div class="time" id="currentTime{{ loop.index }}">00:00</div>
+              <div class="progress">
+                <input type="range" id="progressBar{{ loop.index }}" value="0" min="0" step="1" />
+              </div>
+              <div class="time" id="totalTime{{ loop.index }}">0:00</div>
+            </div>
+            <div class="volume-container">
+              <i class="fas fa-volume-up volume-icon" id="volumeIcon{{ loop.index }}"></i>
+              <div class="volume-slider-container">
+                <input type="range" id="volumeSlider{{ loop.index }}" min="0" max="1" step="0.1" value="1" />
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+      <script src="/s/assets/js/audio-player.js"></script>
+      {% endif %}
+      
+      
+      <!-- Short Description -->
+      {% if parsed_entries.text %}
+      <section>
+        <span>{{ parsed_entries.text[0].content | safe }}</span>
+        {% if EDIT_MODE %}
+        <a class="edit-button" href="/app/edit/{{ parsed_entries.text[0].id }}">Edit</a>
         {% endif %}
-
-	<!-- Audio Section -->
-        {% if parsed_entries.audio %}
-        <section>
-            <h2>Audio</h2>
-            {% for audio in parsed_entries.audio %}
-            <audio controls>
-                <source src="/s/{{ main_entry[1] }}/{{ audio.filename }}" type="{{ audio.file_type }}">
-                Your browser does not support the audio element.
-            </audio>
-            {% endfor %}
-        </section>
+      </section>
+      {% endif %}
+      
+      
+      {% if parsed_entries.folders %}
+      <section>
+        <h2>Einträge</h2>
+        {% for folder in parsed_entries.folders %}
+        <a class="entries" href="/app/entry/{{ folder.id }}?edit=true">{{ folder.content or folder.filename | e }}</a>
+        {% endfor %}
+      </section>
+      {% endif %}
+      
+      <!-- Other Details -->
+      <section>
+        <img width="80px" src="/s/{{ main_entry[1] }}/qr.png" alt="QR code">
+      </section>
+      <section>
+        <h2>Weitere Daten</h2>
+        {% for text in parsed_entries.text[1:] %}
+        <h3>{{ text.filename | e }}</h3>
+        <span>{{ text.content | safe }}</span>
+        {% if EDIT_MODE %}
+        <a class="edit-button" href="/app/edit/{{ text.id }}">Edit</a>
         {% endif %}
+        {% endfor %}
+      </section>
 
-
-	<!-- Short Description -->
-        {% if parsed_entries.text %}
-        <section>
-            <span>{{ parsed_entries.text[0].content | safe }}</span>
-            {% if EDIT_MODE %}
-	    <a class="edit-button" href="/app/edit/{{ parsed_entries.text[0].id }}">Edit</a>
-            {% endif %}
-        </section>
-        {% endif %}
-
-
-        {% if parsed_entries.folders %}
-        <section>
-            <h2>Einträge</h2>
-            {% for folder in parsed_entries.folders %}
-            <a class="entries" href="/app/entry/{{ folder.id }}?edit=true">{{ folder.content or folder.filename | e }}</a>
-            {% endfor %}
-        </section>
-        {% endif %}
-        
-        <!-- Other Details -->
-	<section>
-            <img width="80px" src="/s/{{ main_entry[1] }}/qr.png" alt="QR code">
-	</section>
-        <section>
-            <h2>Weitere Daten</h2>
-            {% for text in parsed_entries.text[1:] %}
-            <h3>{{ text.filename | e }}</h3>
-            <span>{{ text.content | safe }}</span>
-            {% if EDIT_MODE %}
-	    <a class="edit-button" href="/app/edit/{{ text.id }}">Edit</a>
-            {% endif %}
-            {% endfor %}
-        </section>
     </main>
+
     <footer>
-        <p><a href="/app/entry/1?edit=true">Zurück zur Übersicht</a></p>
+        <p><a href="/entry/1?edit=true">Zurück zur Übersicht</a></p>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('hamburger-menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
 </body>
 </html>
-
